@@ -136,14 +136,17 @@ public class Simulator {
                                 entities.remove(et1);
                             if (et2.isAlive == false)
                                 entities.remove(et2);
+                            break;
                         } 
                         else if (actionRand % 3 == 1 && (et1.isAlive == true && et2.isAlive == true)){
                             scene.createCreature(pl, et1.getEntity());
                             System.out.println("status:" + et1.getName() + " and " + et2.getName() + " have created a new creature..");
+                            break;
                         }
                         else if (actionRand % 3 == 2){
                             try {
                                 doStuff(et1);
+                                break;
                             } catch (Exception e){
                                 e.printStackTrace();
                             }
