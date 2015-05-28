@@ -9,35 +9,36 @@ public class Simulator {
     private God player;
     private Scene scene;
     final static protected int PLANET_SIZE = 300;
+    //maximum elements that can be added at a time to a planet
     final static protected int MAXIMUM_PLANETS = 9;
-
+    //number of maximum planets
     public Simulator() {
         player = new God();
         scene = new Scene();
     }
-
+    //default Constructor
     public void Run() {
         Menu();
     }
-
+    //starts the Menu
     private void createPlanet() {
         if (scene.getPlanets().size() < MAXIMUM_PLANETS)
             scene.createPlanet();
         else
             System.out.println("No more planets can be added..");
     }
-
+    //creates a new Planet with random variables and adds it to ArrayList
     private void destroyPopulation(String input) {
         String str[] = input.split(" ");
         String planetName = str[2];
         for (Planet pl : scene.getPlanets()) {
             if (pl.getName().equals(planetName)) {
-                player.destroyPopulation(pl);
+                pl.destroyPopulation();
                 break;
             }
         }
     }
-
+    //removes population from given planet
     private void destroyPlanet(String input) {
         String str[] = input.split(" ");
         String planetName = str[1];
@@ -48,12 +49,12 @@ public class Simulator {
             }
         }
     }
-
+    //removes given planet from ArrayList
     private void showStatistics() {
         for (Planet pl : scene.getPlanets())
             System.out.println("Planet:" + pl.getName() + " population:" + pl.getPopulationCount());
     }
-
+    //prints each planet's population size
     private void addCreatures(String input) {
         String[] str = input.split(" ");
         String planetName = str[1];
@@ -88,7 +89,7 @@ public class Simulator {
         }
         System.out.println(size + " " + entity + "s added to " + str[1] + "...");
     }
-
+    //adds n entities(or subclass units) to given planet
     private void showHelp() {
         System.out.println("Main Menu");
         System.out.println("Type \"create\" to create a new planet.");
@@ -99,7 +100,7 @@ public class Simulator {
         System.out.println("Type \"help\" for instructions.");
         System.out.println("Type \"exit\" to exit.");
     }
-
+    //shows the main menu
     private void removeDeadEntities(List<Entity> entities) {
 
         for (Entity et : entities) {
@@ -107,14 +108,14 @@ public class Simulator {
                 entities.remove(et);
         }
     }
-
+    //updates the ArrayList of entities with dead ones removed
     private void moveEntities(List<Entity> entities) throws InterruptedException {
         for (Entity et : entities) {
             Thread.sleep(100);
             et.Move();
         }
     }
-
+    //iterates through entities ArrayList and performs Move method on them
     private void executeAnAction(Planet pl, List<Entity> entities) throws InterruptedException {
         RandomNumberGenerator rng = new RandomNumberGenerator();
         int actionRand = 0;
@@ -156,25 +157,24 @@ public class Simulator {
                 }
         }
     }
-
+    //chooses randomly an action 
     private void doStuff(Entity entity) throws IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, NoSuchMethodException, SecurityException, InstantiationException,
             InterruptedException {
         RandomNumberGenerator rng = new RandomNumberGenerator();
         String[] methodNames = { "Analyze", "Sleep", "Eat", "SearchingForFood" };
-//        for (Entity et : entities) {
-            Thread.sleep(3000);
-            int num = rng.generateNumberRange(methodNames.length);
-            Method[] methods = entity.getClass().getMethods();
-            for (Method method : methods) {
-                if (method.getName().equals(methodNames[num])) {
-                    method.invoke(entity.getClass().newInstance());
-                    break;
-                }
+        Thread.sleep(3000);
+        int num = rng.generateNumberRange(methodNames.length);
+        Method[] methods = entity.getClass().getMethods();
+        for (Method method : methods) {
+            if (method.getName().equals(methodNames[num])) {
+                method.invoke(entity.getClass().newInstance());
+                break;
             }
-//        }
+        }
     }
 
+    //invokes a method that does a action based on random choosing by using reflection
     public void Update() throws InterruptedException {
         while (true) {
             for (Planet pl : scene.getPlanets()) {
@@ -192,7 +192,7 @@ public class Simulator {
             }
         }
     }
-
+    //updates each entity's position and performs an action chosen by given methods
     private boolean checkValidInput(String input) {
         String[] strArr = input.split(" ");
         List<Planet> planets = scene.getPlanets();
@@ -229,7 +229,7 @@ public class Simulator {
         
         return false;
     }
-
+    //boolean function which checks for valid input
     public void Menu() {
         Scanner in = new Scanner(System.in);
         String input;
@@ -280,5 +280,5 @@ public class Simulator {
         }
 
     }
-
+    //main menu in which a command is given from the console
 }

@@ -5,9 +5,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Scene {
     private List<Planet> planets = new CopyOnWriteArrayList<Planet>();
+    //concurrent ArrayList
     public List<Planet> getPlanets(){
         return planets;
     }
+    //returns an ArrayList of all planets
     public void createCreature(Planet pl,EntityType et){
         RandomNumberGenerator rng = new RandomNumberGenerator();
         switch(et){
@@ -24,16 +26,19 @@ public class Scene {
         }
         
     }
+    //creates a new entity(or subclass unit) with random variables and adds it to the planet's population
     public void createPlanet(){
         Planet planet = new Planet();
         if(planet.getName()!=null)
         planets.add(planet);
         System.out.println("a new planet " + planet.getName() + " has been created...");
     }
+    //adds a new planet(created with random variables) to the ArrayList
     public void destroyPlanet(Planet pl){
         planets.remove(pl);
         pl.destroyPopulation();
         pl.setDestroyed();
         System.out.println(pl.getName() + " has been destroyed..");
     }
+    //removes the given planet from the ArrayList
 }
