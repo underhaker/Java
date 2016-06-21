@@ -1,0 +1,115 @@
+package yes.starship;
+
+import android.content.Context;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+import android.widget.RelativeLayout;
+
+/**
+ * Created by Joni on 19.5.2016 ã..
+ */
+public class SpaceshipView extends SurfaceView implements Runnable{
+    Context context;
+    private Thread gameThread = null;
+    private SurfaceHolder ourHolder;
+    private volatile boolean playing;
+    private boolean paused = true;
+    private Canvas canvas;
+    private Paint paint;
+    private long fps;
+    private long timeThisFrame;
+    private int screenX;
+    private int screenY;
+    private Star star;
+//    private PlayerShip playerShip;
+//    private Blaster blaster;
+//    private Blaster[] enemyBlaster = new Blaster[200];
+//    private int nextBlaster;
+//    private int maxEnemyBlaster = 10;
+//    Enemy[] enemies = new Enemy[60];
+//    int numEnemies = 0;
+    int score = 0;
+    private int lives = 4;
+    public SpaceshipView(Context context, int x,int y){
+        super(context);
+        this.context = context;
+        ourHolder = getHolder();
+        paint = new Paint();
+        screenX = x;
+        screenY = y;
+        prepareLevel();
+    }
+
+    private void prepareLevel() {
+//        RelativeLayout layout = (RelativeLayout) getRootView().findViewById(R.id.game_01);
+//        SpaceshipActivity spaceshipActivityContext = (SpaceshipActivity) getContext();
+//        Star stars = new Star(spaceshipActivityContext,layout);
+//        stars.createStars();
+
+    }
+    @Override
+    public void run() {
+        while(playing) {
+            long startFrameTime = System.currentTimeMillis();
+
+            if(!paused){
+                update();
+            }
+            draw();
+            timeThisFrame = System.currentTimeMillis() - startFrameTime;
+            if (timeThisFrame >= 1) {
+                fps = 1000 / timeThisFrame;
+            }
+        }
+    }
+    private void update() {
+        boolean bumped = false;
+        boolean lost = false;
+        if(lost){
+            prepareLevel();
+        }
+    }
+    private void draw() {
+        if(ourHolder.getSurface().isValid()){
+            canvas = ourHolder.lockCanvas();
+            canvas.drawColor(Color.rgb(0, 0, 0));
+            paint.setColor(Color.argb(255, 255, 255, 255));
+            paint.setColor(Color.argb(255, 249, 129, 0));
+            paint.setTextSize(40);
+                canvas.drawText("Score: " + score + "  Lives: " + lives,10,50,paint);
+//            RelativeLayout layout = (RelativeLayout)findViewById(R.id.game_01);
+//            stars.createStars(layout);
+            ourHolder.unlockCanvasAndPost(canvas);
+
+        }
+    }
+    public void pause() {
+        playing = false;
+        try {
+            gameThread.join();
+        } catch (InterruptedException e) {
+            Log.e("Error:","joining thread");
+        }
+    }
+    public void resume() {
+        playing = true;
+        gameThread = new Thread(this);
+        gameThread.start();
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent motionEvent) {
+        switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+            case MotionEvent.ACTION_DOWN:
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+        }
+        return true;
+    }
+}
